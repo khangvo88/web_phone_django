@@ -1,0 +1,13 @@
+List Phones:
+{% if smartphone_list %}
+    <ul>
+    {% for phone in smartphone_list %}
+        <li> <!--<a href="/cellphones/{{ phone.id }}/"> -->
+        <a href="{% url 'cellphones:detail' phone.id %}">
+        {{ phone.phone_model }} </a>            
+        </li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No phones are available.</p>
+{% endif %}
