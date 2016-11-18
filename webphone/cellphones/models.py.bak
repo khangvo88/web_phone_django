@@ -1,0 +1,161 @@
+"""this is model used multiple inheritance (concrete inheritance) 
+1. Problem: http://stackoverflow.com/questions/23466577/should-i-avoid-multi-table-concrete-inheritance-in-django-by-any-means
+
+2. some helpful plugin/addon for multiple inheritance 
+    a. use django-polymorphic https://django-polymorphic.readthedocs.io/en/stable/
+    b. use django-model-utils https://django-model-utils.readthedocs.io/en/latest/
+  -> help find specific type when fetch from base class
+-> CHANGE TO ABSTRACT ONLY
+"""
+
+from django.db import models
+
+#from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
+
+# from django.utils import timezone
+# import datetime
+
+
+# Create your models here.
+STATUS_ACTIVE = 1
+STATUS_INACTIVE = 2
+STATUS_CLOSED = 3
+STATUS_CHOICES = (
+        (STATUS_ACTIVE,'STATUS_ACTIVE'),
+        (STATUS_INACTIVE,'STATUS_INACTIVE'),
+        (STATUS_CLOSED,'STATUS_CLOSED'),
+    )
+
+class Producer(models.Model):
+    
+    name = models.CharField(max_length=100)
+    pub_date = models.DateField('date created',blank=True, null=True)
+    email = models.EmailField(max_length=254, default='', blank=True)
+    description = models.CharField(max_length=1000, blank=True)    
+    
+    status = models.SmallIntegerField(choices=STATUS_CHOICES, default=STATUS_ACTIVE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True) 
+            
+    def __str__(self):
+        return self.name
+            
+    
+class DeviceAccessories(models.Model):
+    name = models.CharField(max_length=100)
+    price = models.FloatField(default=0)
+    producer = models.ForeignKey(Producer, on_delete=models.CASCADE)
+    description = models.TextField(max_length=500, default="",blank=True) 
+    TYPE_IN_ACCESSORIES =(
+        ('ADAPTER'      , "Adapter"),
+        ('HEADPHONE'    , "Headphone"),
+        ('MANUAL'       , "Manual book"),
+        ('CORD'         , "Chargin cord"),
+        ('OTHERS'         , "Others"), 
+    )    
+    type = models.CharField(max_length=10, choices = TYPE_IN_ACCESSORIES,
+                            default="Adapter")        
+    price = models.FloatField(default=0)            
+    def __str__(self):
+        return "%s %s" %(self.producer.name, self.name)
+    
+class Device(models.Model):
+    producer = models.ForeignKey(Producer, on_delete=models.CASCADE)    
+    name = models.CharField(max_length=100)    
+    model = models.CharField(max_length=100, blank=True)            
+    description = models.TextField(max_length=500,blank=True)
+    price = models.FloatField(default=0)
+    price_1 = models.FloatField(default=0) # discount-price    
+    weight          = models.FloatField(blank=True, default=0)
+    pub_date = models.DateField('date published',blank=True,null=True)    
+    warranty = models.IntegerField(default=12)   #default warranty = 12 month
+    accessories = models.ManyToManyField(DeviceAccessories,through='DeviceAndAccessories')    
+
+    content_type = models.ForeignKey(ContentType, editable=False, on_delete=models.CASCADE)
+    
+    def save(self, *args, **kwargs):                        
+        if self.pk is None:    #replace with #if self._state.adding:
+            self.content_type = ContentType.objects.get_for_model(type(self))
+        super(Device, self).save(*args, **kwargs)  
+        
+    def get_instance(self):
+        return self.content_type.get_object_for_this_type(id=self.id)      
+    
+    def __str__(self):
+        return self.name    
+    
+    def cast(self):
+        """ cast base class to appropriate extend class        
+           apple = Base.objects.get(name='Granny Smith').cast()           
+        :return self: A casted child class of self"""        
+        for name in dir(self):
+            try:
+                attr = getattr(self, name)
+                if isinstance(attr, self.__class__) and type(attr) != type(self):
+                    return attr
+            except:
+                pass
+        return self    
+    
+         
+class DeviceAndAccessories(models.Model):
+    device = models.ForeignKey(Device)
+    accessories = models.ForeignKey(DeviceAccessories)
+    is_integrated = models.BooleanField(default=False)
+
+class Laptop(Device):
+    cpu             = models.CharField(max_length=100,blank=True)
+    ram             = models.CharField(max_length=100,blank=True)
+    screen          = models.CharField(max_length=100,blank=True)
+    harddisk        = models.CharField(max_length=100,blank=True)
+    gpu             = models.CharField(max_length=100,blank=True)
+    optical_disk    = models.CharField(max_length=100,blank=True)
+    webcam          = models.CharField(max_length=100,blank=True)
+    communucation_port = models.CharField(max_length=100,blank=True)
+    connection      = models.CharField(max_length=100,blank=True)
+    battery         = models.CharField(max_length=100,blank=True)
+    special_feature = models.TextField(max_length=200,blank=True)
+    def __str__(self):  
+        return "%s %s %s" %(self.producer.name, self.name, self.model)
+    
+    
+    
+        
+
+class MobileSpecification(models.Model):    
+    
+    screen          = models.CharField(max_length=100,blank=True)
+    os              = models.CharField(max_length=100,blank=True)
+    camera_front    = models.CharField(max_length=100,blank=True)
+    camera_back     = models.CharField(max_length=100,blank=True)
+    cpu             = models.CharField(max_length=100,blank=True)
+    ram             = models.CharField(max_length=100,blank=True)    
+    internal_memory = models.CharField(max_length=100,blank=True)
+    memory_card     = models.CharField(max_length=100,blank=True)
+    sim_type        = models.CharField(max_length=100,blank=True)    
+    wireless_tech   = models.CharField(max_length=100,blank=True)
+    battery         = models.CharField(max_length=100,blank=True)
+    design          = models.CharField(max_length=100,blank=True)    
+    carrier         = models.CharField(max_length=100,blank=True)
+    special_features= models.TextField(max_length=100,blank=True)    
+    class Meta:
+        abstract = True        
+
+class Smartphone(Device, MobileSpecification):          
+                  
+    color = models.CharField(max_length=100, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)     
+        
+    class Meta:
+        ordering = ['pub_date', 'name']    
+        
+    def __str__(self):
+        return "%s %s" %(self.producer.name,self.name)        
+        
+class Tablet(Device, MobileSpecification):
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True) 
+    def __str__(self):
+        return self.name

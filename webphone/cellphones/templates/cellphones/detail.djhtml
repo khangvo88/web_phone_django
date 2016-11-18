@@ -1,16 +1,16 @@
-<h1> {{ phone.phone_model }}</h1>
+<h1> {{ smartphone.phone_model }}</h1>
 
 {% if error_message %} <p><strong>{{ error_message }}</strong></p> {% endif %}
 
 <ul>    
-    <li>Published date: {{ phone.pub_date }}</li>
-    <li>Producer: <a href="mailto:{{ phone.producer.email }}">{{ phone.producer }}</a></li>
-    <li>Description: {{ phone.description }}</li>
-    <li>Price: ${{ phone.price }}</li>
-    <li>Total sales: {{ phone.total_sales }}</li>    
+    <li>Published date: {{ smartphone.pub_date }}</li>
+    <li>Producer: <a href="mailto:{{ smartphone.producer.email }}">{{ smartphone.producer }}</a></li>
+    <li>Description: {{ smartphone.description }}</li>
+    <li>Price: ${{ smartphone.price }}</li>
+    <li>Total sales: {{ smartphone.total_sales }}</li>    
 </ul>
 
-<form action="{% url 'cellphones:buy' phone.id %}" method="post">
+<form action="{% url 'cellphones:buy' smartphone.id %}" method="post">
 {% csrf_token %}
 <label for="quantity">Quantity: </label>
 <input type="text" name="quantity" value="1"/> 

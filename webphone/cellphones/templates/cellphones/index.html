@@ -1,0 +1,238 @@
+{% extends 'cellphones/base.html' %}
+{% load staticfiles %}
+{% load extras %}
+{% load cropping %}
+
+{% block topslider %}
+<section id="slider"><!--slider-->
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div id="slider-carousel" class="carousel slide" data-ride="carousel">
+                        <ol class="carousel-indicators">
+                            <li data-target="#slider-carousel" data-slide-to="0" class="active"></li>
+                            <li data-target="#slider-carousel" data-slide-to="1"></li>
+                            <li data-target="#slider-carousel" data-slide-to="2"></li>
+                        </ol>
+
+                        <div class="carousel-inner">
+                            <div class="item active">
+                                <div class="col-sm-6">
+                                    <h1><span>E</span>-SHOPPER</h1>
+                                    <h2>Free E-Commerce Template</h2>
+                                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. </p>
+                                    <button type="button" class="btn btn-default get">Get it now</button>
+                                </div>
+                                <div class="col-sm-6">
+                                    <img src="{% static 'cellphones/images/home/girl1.jpg' %}" class="girl img-responsive" alt="" />
+                                    <img src="{% static 'cellphones/images/home/pricing.png' %}"  class="pricing" alt="" />
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="col-sm-6">
+                                    <h1><span>E</span>-SHOPPER</h1>
+                                    <h2>100% Responsive Design</h2>
+                                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. </p>
+                                    <button type="button" class="btn btn-default get">Get it now</button>
+                                </div>
+                                <div class="col-sm-6">
+                                    <img src="{% static 'cellphones/images/home/girl2.jpg' %}" class="girl img-responsive" alt="" />
+                                    <img src="{% static 'cellphones/images/home/pricing.png' %}"  class="pricing" alt="" />
+                                </div>
+                            </div>
+
+                            <div class="item">
+                                <div class="col-sm-6">
+                                    <h1><span>E</span>-SHOPPER</h1>
+                                    <h2>Free Ecommerce Template</h2>
+                                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. </p>
+                                    <button type="button" class="btn btn-default get">Get it now</button>
+                                </div>
+                                <div class="col-sm-6">
+                                    <img src="{% static 'cellphones/images/home/girl3.jpg' %}" class="girl img-responsive" alt="" />
+                                    <img src="{% static 'cellphones/images/home/pricing.png' %}" class="pricing" alt="" />
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <a href="#slider-carousel" class="left control-carousel hidden-xs" data-slide="prev">
+                            <i class="fa fa-angle-left"></i>
+                        </a>
+                        <a href="#slider-carousel" class="right control-carousel hidden-xs" data-slide="next">
+                            <i class="fa fa-angle-right"></i>
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section><!--/slider-->
+
+{% endblock topslider %}
+
+{% block maincontent %}
+
+                    {% if featured_products %}
+                    <div class="features_items"><!--features_items-->
+                        <h2 class="title text-center">Features Items</h2>
+
+                        {% for item in featured_products %}
+                        <div class="col-sm-4">
+                            <div class="product-image-wrapper">
+                                <div class="single-products">
+                                        <div class="productinfo text-center">
+                                            <!-- <img src="{% static 'cellphones/images/home/product1.jpg' %}" alt="" /> #} -->
+                                            {% if item.device_image %}
+                                            <img src="{% cropped_thumbnail item 'image_ratio' %}" alt="" />
+                                            {% else %}
+                                            <img src="{% static 'cellphones/images/noimg.jpg' %}" />
+                                            {% endif %}
+                                            <h2>{{item.price|currency}}</h2>
+                                            <p>{{ item }}</p>
+                                            <a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
+                                        </div>
+                                        <div class="product-overlay">
+                                            <div class="overlay-content">
+                                                <h3>Details</h3>
+
+                                                <table style="top:0;border: none; text-align: left;margin:0 10px; bottom:auto">
+                                                    <tr>
+                                                        <td>Producer :</td>
+                                                        <td>{{item.producer.name}}</td>
+                                                    </tr>
+                                                    {% if item.os %}
+                                                    <tr>
+                                                        <td>OS :</td>
+                                                        <td>{{item.os}}</td>
+                                                    </tr>
+                                                    {% endif %}
+                                                    {% if item.cpu %}
+                                                    <tr>
+                                                        <td>CPU :</td>
+                                                        <td>{{item.cpu}}</td>
+                                                    </tr>
+                                                    {% endif %}
+                                                    {% if item.ram %}
+                                                    <tr>
+                                                        <td>RAM :</td>
+                                                        <td>{{item.ram}}</td>
+                                                    </tr>
+                                                    {% endif %}
+                                                    {% if item.battery %}
+                                                    <tr>
+                                                        <td>Battery :</td>
+                                                        <td>{{item.battery}}</td>
+                                                    </tr>
+                                                    {% endif %}
+                                                    {% if item.special_features %}
+                                                    <tr>
+                                                        <td>Special :</td>
+                                                        <td>{{item.special_features}}</td>
+                                                    </tr>
+                                                    {% endif %}
+                                                </table>
+                                                <div class="desc">{{item.description}}</div>
+                                                <a style="float: right; margin-right: 30px" href="{% url 'cellphones:product-detail' item.id%}">Link</a>
+                                                <h2>{{item.price|currency}}</h2>
+                                                <p>{{ item }}</p>
+
+                                                <a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
+                                            </div>
+                                        </div>
+                                        {% if item.on_sale %}
+                                        <img src="{% static 'cellphones/images/home/sale.png' %}" class="new" alt="" />
+                                        {% elif item.is_new_product %}
+                                        <img src="{% static 'cellphones/images/home/new.png' %}" class="new" alt="" />
+                                        {% endif %}
+                                </div>
+                                <div class="choose">
+                                    <ul class="nav nav-pills nav-justified">
+                                        <li><a href="#"><i class="fa fa-plus-square"></i>Add to wishlist</a></li>
+                                        <li><a href="#"><i class="fa fa-plus-square"></i>Add to compare</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+
+                    </div><!--features_items-->
+                    {% endif %}
+
+                    <div class="category-tab"><!--category-tab-->
+                        <div class="col-sm-12">
+
+                            <ul class="nav nav-tabs">
+                                {% for category_name in recent_product_list %}
+                                    <li {% if forloop.first %}class="active"{% endif %}><a href="#TYPE-{{ category_name|cut:' '}}" data-toggle="tab">{{ category_name|cut:' ' }}</a></li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        <div class="tab-content">
+                            {% for name, products in recent_product_list.items %}
+                            <div class="tab-pane fade {% if forloop.first %}active in{% endif %}" id="TYPE-{{ name|cut:' ' }}" >
+                                {% for product in products %}
+                                <div class="col-sm-3">
+                                    <div class="product-image-wrapper">
+                                        <div class="single-products">
+                                            <div class="productinfo text-center">
+                                                <a href="{% url 'cellphones:product-detail' product.id %}" >
+                                                {% if product.device_image %}
+                                                <img src="{% cropped_thumbnail product 'image_ratio' %}" alt="" />
+                                                {% else %}
+                                                <img src="{% static 'cellphones/images/noimg.jpg' %}" />
+                                                {% endif %}
+                                                </a>
+                                                <h2>{{product.price|currency}}</h2>
+                                                <p>{{product.name}}</p>
+                                                <a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div><!--/category-tab-->
+
+                    <div class="recommended_items"><!--recommended_items-->
+                        <h2 class="title text-center">recommended items</h2>
+
+                        <div id="recommended-item-carousel" class="carousel slide" data-ride="carousel">
+                            <div class="carousel-inner">
+                                {% for item in recommended_products %}
+                                    {% if forloop.counter0|divisibleby:3 %}
+                                <div class="item {% if forloop.counter0 == 0 %}active{% endif %}">
+                                    {% endif %}
+                                    <div class="col-sm-4">
+                                        <div class="product-image-wrapper">
+                                            <div class="single-products">
+                                                <div class="productinfo text-center">
+                                                    <img src="{% static 'cellphones/images/home/recommend1.jpg' %}" alt="" />
+                                                    <h2>{{item.price|currency}}</h2>
+                                                    <p>{{item}}</p>
+                                                    <a href="#" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>Add to cart</a>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {% if forloop.counter|divisibleby:3 %}
+                                </div>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                            {% if recommended_products|length > 3 %}
+                             <a class="left recommended-item-control" href="#recommended-item-carousel" data-slide="prev">
+                                <i class="fa fa-angle-left"></i>
+                              </a>
+                              <a class="right recommended-item-control" href="#recommended-item-carousel" data-slide="next">
+                                <i class="fa fa-angle-right"></i>
+                              </a>
+                            {% endif %}
+                        </div>
+                    </div><!--/recommended_items-->
+{% endblock %}

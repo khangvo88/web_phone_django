@@ -1,3 +1,8 @@
+{% load staticfiles %}
+<link rel="stylesheet" type="text/css" href="{% static 'cellphones/style.css' %}" />
+
+<div class='container'>
+
 List Phones:
 {% if smartphone_list %}
     <ul>
@@ -11,3 +16,5 @@ List Phones:
 {% else %}
     <p>No phones are available.</p>
 {% endif %}
+
+<div>
